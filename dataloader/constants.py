@@ -2,7 +2,7 @@
 SRC_LANGUAGE = 'de'
 TGT_LANGUAGE = 'en'
 
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 
 # Define the special tokens
 UNK_IDX, PAD_IDX, BOS_IDX, EOS_IDX = 0, 1, 2, 3
