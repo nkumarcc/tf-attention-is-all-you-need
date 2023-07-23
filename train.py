@@ -4,6 +4,7 @@ import pickle
 import secrets
 import os
 import argparse
+from datetime import date
 
 import logging
 
@@ -17,7 +18,8 @@ def generate_hash(length):
 
 def run_training(path_to_data, num_epochs=30, is_small=False):
     model_id = generate_hash(6)
-    filepath = f'./weights_and_metrics/{model_id}'
+    today = date.today()
+    filepath = f'./weights_and_metrics/{today}_{model_id}'
     if not os.path.exists(filepath):
         os.makedirs(filepath)
     
