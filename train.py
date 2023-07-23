@@ -23,7 +23,7 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
     if not os.path.exists(filepath):
         os.makedirs(filepath)
     
-    logging.basicConfig(filename=f'./logs/{model_id}.log', level=logging.INFO)
+    logging.basicConfig(filename=f'./logs/{today}_{model_id}.log', level=logging.INFO)
 
     # Get the iterators
     train_iter, val_iter, _ = get_iters(path_to_data)
