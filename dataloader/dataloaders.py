@@ -2,7 +2,6 @@ import torch
 from torch.nn.utils.rnn import pad_sequence
 from torchtext.data.functional import to_map_style_dataset
 from torchtext.vocab import Vocab
-from torchtext.data import Iterator
 from torch.utils.data import DataLoader
 from typing import Dict, Tuple
 
@@ -10,7 +9,7 @@ from .constants import PAD_IDX, BATCH_SIZE, SRC_LANGUAGE, TGT_LANGUAGE
 
 
 def get_dataloader(
-    iter: Iterator,
+    iter: DataLoader,
     token_transform: Dict[str, any],
     vocab_transform: Dict[str, Vocab],
 ) -> Tuple[DataLoader, DataLoader]:

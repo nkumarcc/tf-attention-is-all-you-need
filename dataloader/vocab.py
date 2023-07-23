@@ -1,11 +1,11 @@
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator, Vocab
-from torchtext.data import Iterator
+from torch.utils.data import DataLoader
 from typing import Dict, Tuple
 
 from .constants import SRC_LANGUAGE, TGT_LANGUAGE, UNK_IDX, special_symbols
 
-def get_vocab_transform(train_iter: Iterator) -> Tuple[Dict[str, any], Dict[str, Vocab]]:
+def get_vocab_transform(train_iter: DataLoader) -> Tuple[Dict[str, any], Dict[str, Vocab]]:
     # Define the tokenizers
     token_transform = {}
     token_transform[SRC_LANGUAGE] = get_tokenizer('spacy', language='de_core_news_sm')
