@@ -45,6 +45,7 @@ class Transformer(nn.Module):
         if d_model % num_heads != 0:
            raise ValueError("d_model is not divisible by num_heads.")
         d_data = d_model // num_heads
+        self.d_model = d_model
         self.src_positional_embedding = PositionalEmbedding(src_vocab_size, d_model)
         self.tgt_positional_embedding = PositionalEmbedding(tgt_vocab_size, d_model)
         self.encoders = nn.ModuleList([Encoder(num_heads, d_model, d_data) for _ in range(num_layers)])
@@ -52,11 +53,11 @@ class Transformer(nn.Module):
         self.linear = nn.Linear(d_model, tgt_vocab_size)
 
     def forward(self, X, Y):
-        X = self.src_positional_embedding(X)
+        X = self.src_positional_embedding(X) * self.d_model**0.5
         for encoder in self.encoders:
           X = encoder(X)
 
-        Y = self.tgt_positional_embedding(Y)
+        Y = self.tgt_positional_embedding(Y) * self.d_model**0.5
         for decoder in self.decoders:
           Y = decoder(Y, X)
 

@@ -8,7 +8,7 @@ from datetime import date
 
 import logging
 
-from transformer import Transformer
+from transformer import Transformer, get_optimizer_and_scheduler
 from dataloader import get_iters, get_vocab_transform, get_dataloader
 from dataloader.constants import SRC_LANGUAGE, TGT_LANGUAGE, PAD, PAD_IDX
 
@@ -47,9 +47,10 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
         val_dataloader = small_val_dataloader
 
     # Initialize the model
+    d_model = 512
     src_vocab_size = len(vocab_transform[SRC_LANGUAGE])
     tgt_vocab_size = len(vocab_transform[TGT_LANGUAGE])
-    model = Transformer(src_vocab_size, tgt_vocab_size)    
+    model = Transformer(src_vocab_size, tgt_vocab_size, d_model=d_model)    
     
     # Move model to GPU if available
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -59,7 +60,7 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
 
     # Define loss function and optimizer
     criterion = nn.NLLLoss(ignore_index=vocab_transform[TGT_LANGUAGE][PAD])
-    optimizer = torch.optim.Adam(model.parameters())
+    optimizer, scheduler = get_optimizer_and_scheduler(model, model_dim=d_model, lr_mul=0.5)
 
     # Lists to store loss, accuracy, and BLEU values for plotting
     train_losses = []
@@ -100,6 +101,7 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
 
             # Update weights
             optimizer.step()
+            scheduler.step()
 
             total_train_loss += loss.item()
             total_train_acc += train_acc
