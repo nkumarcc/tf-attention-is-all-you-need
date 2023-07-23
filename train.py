@@ -150,6 +150,16 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
                     'val_losses': val_losses,
                     'val_accuracies': val_accuracies,
                 }, f)
+    
+
+    torch.save(model.state_dict(), f'{filepath}/transformer_final.pth')
+    with open(f'{filepath}/losses_accuracies_final.pkl', 'wb') as f:
+        pickle.dump({
+            'train_losses': train_losses,
+            'train_accuracies': train_accuracies,
+            'val_losses': val_losses,
+            'val_accuracies': val_accuracies,
+        }, f)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Train a model with the specified parameters.")
