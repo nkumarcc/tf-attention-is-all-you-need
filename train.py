@@ -168,6 +168,8 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
             'val_accuracies': val_accuracies,
         }, f)
 
+    logging.info(f'Completed training!')
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Train a model with the specified parameters.")
     
