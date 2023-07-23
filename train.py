@@ -55,6 +55,8 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
 
+    logging.info(f'Model initialized. Moving to {device}.')
+
     # Define loss function and optimizer
     criterion = nn.NLLLoss(ignore_index=vocab_transform[TGT_LANGUAGE][PAD])
     optimizer = torch.optim.Adam(model.parameters())
