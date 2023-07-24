@@ -16,6 +16,14 @@ from dataloader.constants import SRC_LANGUAGE, TGT_LANGUAGE, PAD, PAD_IDX
 def generate_hash(length):
     return secrets.token_hex(length)[:length]
 
+def get_accuracy(output, target, pad_idx):
+    output_flatten = output.view(-1, output.shape[-1])
+    target_flatten = target[:, 1:].reshape(-1)
+    non_padding_mask = target_flatten.ne(pad_idx)
+    correct = output_flatten.argmax(1).eq(target_flatten).masked_select(non_padding_mask).sum().item()
+    total = non_padding_mask.sum().item()
+    return correct / total
+
 def run_training(path_to_data, num_epochs=30, is_small=False):
     model_id = generate_hash(6)
     today = date.today()
@@ -89,12 +97,7 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
             loss = criterion(output.view(-1, tgt_vocab_size), tgt[:, 1:].reshape(-1))
 
             # Compute accuracy
-            output_flatten = output.view(-1, output.shape[-1])
-            tgt_flatten = tgt[:, 1:].reshape(-1)
-            non_padding_mask = tgt_flatten.ne(PAD_IDX)
-            correct = output_flatten.argmax(1).eq(tgt_flatten).masked_select(non_padding_mask).sum().item()
-            total = non_padding_mask.sum().item()
-            train_acc = correct / total
+            train_acc = get_accuracy(output, tgt, PAD_IDX)
 
             # Backward pass
             loss.backward()
@@ -135,12 +138,7 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
                 loss = criterion(output.view(-1, tgt_vocab_size), tgt[:, 1:].reshape(-1))
 
                 # Compute accuracy
-                output_flatten = output.view(-1, output.shape[-1])
-                tgt_flatten = tgt[:, 1:].reshape(-1)
-                non_padding_mask = tgt_flatten.ne(PAD_IDX)
-                correct = output_flatten.argmax(1).eq(tgt_flatten).masked_select(non_padding_mask).sum().item()
-                total = non_padding_mask.sum().item()
-                val_acc = correct / total
+                val_acc = get_accuracy(output, tgt, PAD_IDX)
 
                 total_val_loss += loss.item()
                 total_val_acc += val_acc
