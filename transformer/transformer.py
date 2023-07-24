@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch.nn.functional as F
 
 from .positional_embedding import PositionalEmbedding
 from .feed_forward import FeedForward
@@ -61,5 +60,4 @@ class Transformer(nn.Module):
         for decoder in self.decoders:
           Y = decoder(Y, X)
 
-        Y = self.linear(Y)
-        return F.log_softmax(Y, dim=-1)
+        return self.linear(Y)
