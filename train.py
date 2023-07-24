@@ -203,7 +203,7 @@ if __name__ == '__main__':
     run_training(
         args.path_to_data,
         args.num_epochs,
-        args.batch_size / args.gradient_accumulation_steps,
+        int(args.batch_size / args.gradient_accumulation_steps),
         args.gradient_accumulation_steps,
         args.is_small
     )
