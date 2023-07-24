@@ -72,7 +72,7 @@ def run_training(
     logging.info(f'Model initialized. Moving to {device}.')
 
     # Define loss function and optimizer
-    criterion = LabelSmoothingLoss(2, vocab_transform[TGT_LANGUAGE][PAD], 0.1)
+    criterion = LabelSmoothingLoss(tgt_vocab_size, vocab_transform[TGT_LANGUAGE][PAD], 0.1)
     optimizer, scheduler = get_optimizer_and_scheduler(model, model_dim=d_model, lr_mul=0.5)
 
     # Lists to store loss, accuracy, and BLEU values for plotting
