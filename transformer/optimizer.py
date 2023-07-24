@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from torch.optim import Optimizer, Scheduler
 from typing import Tuple
 
 def get_optimizer_and_scheduler(
@@ -11,7 +10,7 @@ def get_optimizer_and_scheduler(
         beta_2 = 0.98,
         eps = 1e-9,
         lr_mul=1.0,
-) -> Tuple[Optimizer, Scheduler]:
+) -> Tuple[torch.optim.Adam, torch.optim.lr_scheduler.LambdaLR]:
     optimizer = torch.optim.Adam(model.parameters(), betas=(beta_1, beta_2), eps=eps)
 
     def lr_lambda(step):
