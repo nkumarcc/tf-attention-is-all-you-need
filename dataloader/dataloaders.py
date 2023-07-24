@@ -5,10 +5,11 @@ from torchtext.vocab import Vocab
 from torch.utils.data import DataLoader
 from typing import Dict, Tuple
 
-from .constants import PAD_IDX, BATCH_SIZE, SRC_LANGUAGE, TGT_LANGUAGE
+from .constants import PAD_IDX, SRC_LANGUAGE, TGT_LANGUAGE
 
 
 def get_dataloader(
+    batch_size: int,
     iter: DataLoader,
     token_transform: Dict[str, any],
     vocab_transform: Dict[str, Vocab],
@@ -30,11 +31,11 @@ def get_dataloader(
     dataset = to_map_style_dataset(iter)
 
     # Create a DataLoader to handle batching of your dataset
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE,
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                              shuffle=True, collate_fn=collate_fn)
 
     # Sanity check data loaders
     small_dataloader = torch.utils.data.DataLoader(torch.utils.data.Subset(dataset, range(min(1000, len(dataset) // 2))),
-                                                   batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_fn)
+                                                   batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
 
     return dataloader, small_dataloader

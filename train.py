@@ -24,7 +24,13 @@ def get_accuracy(output, target, pad_idx):
     total = non_padding_mask.sum().item()
     return correct / total
 
-def run_training(path_to_data, num_epochs=30, is_small=False):
+def run_training(
+    path_to_data,
+    num_epochs=30,
+    batch_size=16,
+    gradient_accumulation_steps=4,
+    is_small=False
+):
     model_id = generate_hash(6)
     today = date.today()
     filepath = f'./weights_and_metrics/{today}_{model_id}'
@@ -47,8 +53,8 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
     token_transform, vocab_transform = get_vocab_transform(train_iter)
 
     # Get the dataloaders
-    train_dataloader, small_train_dataloader = get_dataloader(train_iter, token_transform, vocab_transform)
-    val_dataloader, small_val_dataloader = get_dataloader(val_iter, token_transform, vocab_transform)
+    train_dataloader, small_train_dataloader = get_dataloader(batch_size, train_iter, token_transform, vocab_transform)
+    val_dataloader, small_val_dataloader = get_dataloader(batch_size, val_iter, token_transform, vocab_transform)
 
     if is_small:
         train_dataloader = small_train_dataloader
@@ -76,6 +82,8 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
     train_accuracies = []
     val_accuracies = []
 
+    grad_acc_counter = 0
+
     for epoch in range(num_epochs):
         model.train()  # set model to training mode
         total_train_loss = 0
@@ -86,9 +94,6 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
             # Tokenize and numericalize the source and target sentences
             src = src.to(device)
             tgt = tgt.to(device)
-
-            # Zero the gradients
-            optimizer.zero_grad()
 
             # Forward pass
             output = model(src, tgt[:, :-1])
@@ -102,9 +107,13 @@ def run_training(path_to_data, num_epochs=30, is_small=False):
             # Backward pass
             loss.backward()
 
-            # Update weights
-            optimizer.step()
-            scheduler.step()
+            grad_acc_counter += 1
+            if grad_acc_counter % gradient_accumulation_steps == 0:
+                # Update weights
+                optimizer.step()
+                scheduler.step()
+                # Zero the gradients
+                optimizer.zero_grad()
 
             total_train_loss += loss.item()
             total_train_acc += train_acc
@@ -180,9 +189,22 @@ if __name__ == '__main__':
                         help='Path to the data for training.')
     parser.add_argument('--num_epochs', type=int, default=30, 
                         help='Number of epochs for training. Default is 30.')
+    parser.add_argument('--batch_size', type=int, default=64,
+                        help='Batch size for training. Default is 64.')
+    parser.add_argument('--gradient_accumulation_steps', type=int, default=4,
+                        help='Number of gradient accumulation steps. Default is 4.')
     parser.add_argument('--is_small', action='store_true', 
                         help='Flag indicating if the data is small. No value needed.')
     
     args = parser.parse_args()
+
+    if args.batch_size % args.gradient_accumulation_steps != 0:
+        raise ValueError('Batch size must be divisible by gradient accumulation steps.')
     
-    run_training(args.path_to_data, args.num_epochs, args.is_small)
+    run_training(
+        args.path_to_data,
+        args.num_epochs,
+        args.batch_size / args.gradient_accumulation_steps,
+        args.gradient_accumulation_steps,
+        args.is_small
+    )
