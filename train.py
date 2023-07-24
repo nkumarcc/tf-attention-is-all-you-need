@@ -99,6 +99,7 @@ def run_training(
 
             # Compute loss
             loss = criterion(output.view(-1, tgt_vocab_size), tgt[:, 1:].reshape(-1))
+            loss = loss / gradient_accumulation_steps
 
             # Compute accuracy
             train_acc = get_accuracy(output, tgt, PAD_IDX)
