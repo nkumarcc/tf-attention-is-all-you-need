@@ -1,3 +1,4 @@
+import pdb
 import torch
 import torch.nn as nn
 
@@ -11,6 +12,7 @@ class LabelSmoothingLoss(nn.Module):
         self.dim = dim
 
     def forward(self, pred, target):
+        pdb.set_trace()
         pred = pred.log_softmax(dim=self.dim)
         non_pad_mask = target.ne(self.ignore_index)
         with torch.no_grad():
