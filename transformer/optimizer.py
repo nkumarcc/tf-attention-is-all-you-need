@@ -14,6 +14,7 @@ def get_optimizer_and_scheduler(
     optimizer = torch.optim.Adam(model.parameters(), betas=(beta_1, beta_2), eps=eps)
 
     def lr_lambda(step):
+        step += 1
         return lr_mul * model_dim**-0.5 * min(step**-0.5, step * warmup_steps**-1.5)
 
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
