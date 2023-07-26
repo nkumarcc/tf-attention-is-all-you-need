@@ -13,4 +13,5 @@
 - **Parallelizing computations in MHA:** Instead of making multiple attention layers, you can combine all linear input layers to the attention layers and parallelize all heads at once.
 - PyTorch optimizes `ModuleList`s in a `for` loop
 - **Making NLP datasets is really annoying:** Just look at the `dataloader` dir LOL
-- I did **not** do the steps for sharing weights
+- I did **not** do the steps for sharing weights, nor for BPE. May eventually do this, but unlikely for time
+- Make sure you use min_frequency when building vocabs for dataloaders, min_frequency=1 is too compuationally intensive
