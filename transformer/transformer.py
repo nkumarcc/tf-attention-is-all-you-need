@@ -40,6 +40,8 @@ class Decoder(nn.Module):
 
 class Transformer(nn.Module):
     def __init__(self, src_vocab_size, tgt_vocab_size, num_layers=6, num_heads=8, d_model=512):
+        print('src_vocab_size', src_vocab_size)
+        print('tgt_vocab_size', tgt_vocab_size)
         super(Transformer, self).__init__()
         if d_model % num_heads != 0:
            raise ValueError("d_model is not divisible by num_heads.")
