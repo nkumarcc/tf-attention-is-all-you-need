@@ -28,6 +28,7 @@ def run_training(
     num_epochs=30,
     batch_size=16,
     gradient_accumulation_steps=4,
+    min_frequency=1,
     is_small=False
 ):
     model_id = generate_hash(6)
@@ -49,7 +50,7 @@ def run_training(
     train_iter, val_iter, _ = get_iters(path_to_data)
 
     # Get the tokenizers and vocab
-    token_transform, vocab_transform = get_vocab_transform(train_iter)
+    token_transform, vocab_transform = get_vocab_transform(train_iter, min_frequency)
 
     # Get the dataloaders
     train_dataloader, small_train_dataloader = get_dataloader(batch_size, train_iter, token_transform, vocab_transform)
@@ -193,6 +194,8 @@ if __name__ == '__main__':
                         help='Batch size for training. Default is 64.')
     parser.add_argument('--gradient_accumulation_steps', type=int, default=4,
                         help='Number of gradient accumulation steps. Default is 4.')
+    parser.add_argument('--min_frequency', type=int, default=1,
+                        help='Minimum frequency of token to be used in vocab building. Default is 1.')
     parser.add_argument('--is_small', action='store_true', 
                         help='Flag indicating if the data is small. No value needed.')
     
@@ -206,5 +209,6 @@ if __name__ == '__main__':
         args.num_epochs,
         int(args.batch_size / args.gradient_accumulation_steps),
         args.gradient_accumulation_steps,
+        args.min_frequency,
         args.is_small
     )

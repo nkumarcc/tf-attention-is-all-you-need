@@ -5,7 +5,7 @@ from typing import Dict, Tuple
 
 from .constants import SRC_LANGUAGE, TGT_LANGUAGE, UNK_IDX, special_symbols
 
-def get_vocab_transform(train_iter: DataLoader) -> Tuple[Dict[str, any], Dict[str, Vocab]]:
+def get_vocab_transform(train_iter: DataLoader, min_frequency: int) -> Tuple[Dict[str, any], Dict[str, Vocab]]:
     # Define the tokenizers
     token_transform = {}
     token_transform[SRC_LANGUAGE] = get_tokenizer('spacy', language='de_core_news_sm')
@@ -22,7 +22,7 @@ def get_vocab_transform(train_iter: DataLoader) -> Tuple[Dict[str, any], Dict[st
     vocab_transform = {}
     for ln in [SRC_LANGUAGE, TGT_LANGUAGE]:
         vocab_transform[ln] = build_vocab_from_iterator(yield_tokens(train_iter, ln),
-                                                        min_freq=1,
+                                                        min_freq=min_frequency,
                                                         specials=special_symbols,
                                                         special_first=True)
 
