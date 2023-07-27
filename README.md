@@ -16,3 +16,7 @@
 - I did **not** do the steps for sharing weights, nor for BPE. May eventually do this, but unlikely for time
 - Make sure you use min_frequency when building vocabs for dataloaders, min_frequency=1 is too compuationally intensiveo
 - Using `add_`, `scatter_`, and `fill_` are in place and are more memory efficient, however can only be used in `torch.no_grad` (or other situations that I don't fully know) as they mess with the gradient tracking in PyTorch's computational graph
+
+Citing this PR and this repo for helping understand certain concepts:
+
+https://github.com/jadore801120/attention-is-all-you-need-pytorch/pull/168#
